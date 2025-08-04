@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tic-Tac-Toe Web Application</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #ffffff;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-top: 20px;
+      color: #00f5d4;
+      text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 15px;
+      justify-content: center;
+      margin: 40px auto 20px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #00f5d4;
+      font-size: 2.5rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 15px;
+      box-shadow: 0 0 10px #00f5d4;
+      transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+    }
+
+    .cell:hover {
+      background: rgba(0, 245, 212, 0.2);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00f5d4;
+    }
+
+    #status {
+      font-size: 1.5rem;
+      margin-top: 20px;
+      color: #ffe66d;
+      text-shadow: 0 0 5px #ffe66d;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 30px;
+      background: linear-gradient(to right, #00f5d4, #00c9a7);
+      border: none;
+      color: #000;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 30px;
+      box-shadow: 0 0 10px #00f5d4;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #00c9a7, #00f5d4);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h1>Tic-Tac-Toe</h1>
+  <div class="board" id="board"></div>
+  <h2 id="status">Player X's turn</h2>
+  <button onclick="resetGame()">Restart</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const status = document.getElementById('status');
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let cells = Array(9).fill(null);
+
+    // Create board
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.dataset.index = i;
+      cell.addEventListener('click', handleClick);
+      board.appendChild(cell);
+    }
+
+    function handleClick(e) {
+      const index = e.target.dataset.index;
+
+      if (!gameActive || cells[index]) return;
+
+      cells[index] = currentPlayer;
+      e.target.textContent = currentPlayer;
+
+      if (checkWinner()) {
+        status.textContent = `🎉 Player ${currentPlayer} wins!`;
+        gameActive = false;
+      } else if (!cells.includes(null)) {
+        status.textContent = "🤝 It's a draw!";
+        gameActive = false;
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        status.textContent = `Player ${currentPlayer}'s turn`;
+      }
+    }
+
+    function checkWinner() {
+      const winPatterns = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+      ];
+
+      return winPatterns.some(pattern =>
+        pattern.every(index => cells[index] === currentPlayer)
+      );
+    }
+
+    function resetGame() {
+      cells.fill(null);
+      document.querySelectorAll('.cell').forEach(cell => cell.textContent = '');
+      currentPlayer = 'X';
+      gameActive = true;
+      status.textContent = `Player ${currentPlayer}'s turn`;
+    }
+  </script>
+</body>
+</html>
